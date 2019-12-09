@@ -5,7 +5,8 @@ import numpy as np
 
 
 class SimulatedAnnealing:
-    def __init__(self, concentrator_costs, concentrator_capacities, terminal_demands, terminal_assignment_costs, no_of_concentrators, no_of_terminals):
+    def __init__(self, concentrator_costs, concentrator_capacities, terminal_demands, terminal_assignment_costs, 
+    no_of_concentrators, no_of_terminals, no_of_cycles, no_of_iterations, final_temp, initial_temp):
         self.network_solution = []
         self.network_cost = 0.0
         self.no_of_concentrators = no_of_concentrators
@@ -15,6 +16,10 @@ class SimulatedAnnealing:
         self.concentrator_capacities = copy.deepcopy(concentrator_capacities)
         self.terminal_demands = copy.deepcopy(terminal_demands)
         self.terminal_assignment_costs = copy.deepcopy(terminal_assignment_costs)
+        self.no_of_cycles = no_of_cycles
+        self.no_of_iterations = no_of_iterations
+        self.final_temperature = final_temp
+        self.initial_temperature = initial_temp
     
     # This method creates a preliminary solution in which the terminal demands are simply checked against randomly selected concentrators.
     def get_initial_solution(self):  
@@ -73,21 +78,17 @@ class SimulatedAnnealing:
 
     def run(self):
         self.get_initial_solution()
-        # 50 cycles for the size of this network
-        no_of_cycles = 50
-        # 500 iterations per cycle for the size of this network
-        no_of_iterations = 500
         # Initial temperature, based on probability of accepting new solutions at the start
-        t1 = -1.0/math.log(0.7)
+        t_initial = -1.0/math.log(self.initial_temperature)
         # Final temperature, based on probability of accepting new solutions at the end
-        t50 = -1.0/math.log(0.001)
+        t_final = -1.0/math.log(self.final_temperature)
         # Fractional reduction every cycle
-        frac = (t50/t1)**(1.0/(no_of_cycles-1.0))
+        frac = (t_final/t_initial)**(1.0/(self.no_of_cycles-1.0))
         # Current temperature
-        T = t1
+        T = t_initial
         
-        for i in range(no_of_cycles):
-            for i in range(no_of_iterations):
+        for i in range(self.no_of_cycles):
+            for i in range(self.no_of_iterations):
                 new_solution, new_cost = self.get_new_solution()
                 if new_cost < self.network_cost:
                     # If a new solution yields a lower network cost than the existing one, we deepcopy the new solution, update the total cost, and concentrator capacities accordingly.

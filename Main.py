@@ -6,6 +6,10 @@ from SimulatedAnnealing import SimulatedAnnealing
 
 no_of_concentrators = 0
 no_of_terminals = 0
+no_of_cycles_sa = 0
+no_of_iterations_sa = 0
+initial_temp_sa = 0
+final_temp_sa = 0
 concentrator_deployment_costs = []
 concentrator_capacities = []
 terminal_demands = []
@@ -20,6 +24,10 @@ if __name__ == "__main__":
     for row in readCSV:
         no_of_concentrators = int(row[0])
         no_of_terminals = int(row[1])
+        no_of_cycles_sa = int(row[2])
+        no_of_iterations_sa = int(row[3])
+        initial_temp_sa = float(row[4])
+        final_temp_sa = float(row[5])
   # Parsing the concentrator_capacity_initialcost.csv which holds the information on individual concentrator capacities, and deployment costs.
   with open('TestData/concentrator_capacity_initialcost.csv', encoding='utf8') as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
@@ -35,13 +43,13 @@ if __name__ == "__main__":
           terminal_demands.append(int(row[0]))
           terminal_assigment_costs.append([int(x) for x in row[1].split("-")])
 
-
+  
   # Simulated Annealing
   start_time = time.time()
-  simulated_annealing = SimulatedAnnealing(concentrator_deployment_costs, concentrator_capacities, terminal_demands, terminal_assigment_costs, no_of_concentrators, no_of_terminals)
+  simulated_annealing = SimulatedAnnealing(concentrator_deployment_costs, concentrator_capacities, terminal_demands, terminal_assigment_costs, no_of_concentrators, no_of_terminals, no_of_cycles_sa, no_of_iterations_sa, final_temp_sa, initial_temp_sa)
   simulated_annealing_cost, simulated_annealing_solution, simulated_annealing_used, simulated_annealing_concentrator_capacities = simulated_annealing.run()
   simulated_annealing_running_time = time.time() - start_time
-
+  
   # Greedy
   start_time = time.time()
   greedy_cost, greedy_solution, greedy_used, greedy_concentrator_capacities = Greedy(concentrator_deployment_costs, concentrator_capacities, terminal_demands, terminal_assigment_costs, no_of_concentrators, no_of_terminals)
@@ -51,7 +59,9 @@ if __name__ == "__main__":
   greedy_file.write('Algorithm ran in: %s seconds' % (greedy_running_time) + '\n' + 'Network Cost:' + '\n' + str(greedy_cost) + '\n' + 'Concentrators Used:'+ '\n' + str(greedy_used) + '\n' + 'Concentrator Capacities:'+ '\n' + str(greedy_concentrator_capacities) + '\n' + 'Terminal-Concentrator Relation: ' + '\n' + str(greedy_solution))
   greedy_file.close()
 
+  
   simulated_annealing_file = open('Results/SimulatedAnnealing.txt', 'w')
   simulated_annealing_file.write('Algorithm ran in: %s seconds' % (simulated_annealing_running_time) + '\n' + 'Network Cost:' + '\n' + str(simulated_annealing_cost) + '\n' + 'Concentrators Used:'+ '\n' + str(simulated_annealing_used) + '\n' + 'Concentrator Capacities:'+ '\n' + str(simulated_annealing_concentrator_capacities) + '\n' + 'Terminal-Concentrator Relation: ' + '\n' + str(simulated_annealing_solution))
   simulated_annealing_file.close()
+  
   

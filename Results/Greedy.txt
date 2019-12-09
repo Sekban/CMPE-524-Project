@@ -1,4 +1,4 @@
-Algorithm ran in: 0.01399540901184082 seconds
+Algorithm ran in: 0.012995481491088867 seconds
 Network Cost:
 28190
 Concentrators Used:
