@@ -2,11 +2,12 @@ import random
 import copy
 import math
 import numpy as np
+from GreedyApproach import Greedy
 
 
 class SimulatedAnnealing:
     def __init__(self, concentrator_costs, concentrator_capacities, terminal_demands, terminal_assignment_costs, 
-    no_of_concentrators, no_of_terminals, no_of_cycles, no_of_iterations, final_temp, initial_temp):
+    no_of_concentrators, no_of_terminals, no_of_cycles, no_of_iterations, final_temp, initial_temp, data_directory_keyword, test_size_keyword):
         self.network_solution = []
         self.network_cost = 0.0
         self.no_of_concentrators = no_of_concentrators
@@ -20,20 +21,9 @@ class SimulatedAnnealing:
         self.no_of_iterations = no_of_iterations
         self.final_temperature = final_temp
         self.initial_temperature = initial_temp
-    
-    # This method creates a preliminary solution in which the terminal demands are simply checked against randomly selected concentrators.
-    def get_initial_solution(self):  
-        index = 0
-        while len(self.network_solution) < self.no_of_terminals:
-            random_concentrator_index = random.randint(0, self.no_of_concentrators - 1)
-            if self.concentrator_capacities[random_concentrator_index] >= self.terminal_demands[index]:
-                if not random_concentrator_index in self.network_solution:
-                    self.network_cost += self.concentrator_costs[random_concentrator_index]
-            self.network_solution.append(random_concentrator_index)
-            self.concentrator_capacities[random_concentrator_index] -= self.terminal_demands[index]
-            self.network_cost += self.terminal_assignment_costs[index][random_concentrator_index]
-            # index is incremented by 1 to be able to loop through all of the terminals
-            index += 1
+        self.concentrators_used = []
+        self.data_directory_keyword = data_directory_keyword
+        self.test_size_keyword = test_size_keyword
     
     def get_new_solution(self):
         solution = copy.deepcopy(self.network_solution)
@@ -77,7 +67,8 @@ class SimulatedAnnealing:
         return solution, new_cost
 
     def run(self):
-        self.get_initial_solution()
+        # Getting initial solution using the greedy approach
+        self.network_cost, self.network_solution, self.concentrators_used, self.concentrator_capacities = Greedy(self.concentrator_costs, self.concentrator_capacities, self.terminal_demands, self.terminal_assignment_costs, self.no_of_concentrators, self.no_of_terminals, self.data_directory_keyword, self.test_size_keyword)
         # Initial temperature, based on probability of accepting new solutions at the start
         t_initial = -1.0/math.log(self.initial_temperature)
         # Final temperature, based on probability of accepting new solutions at the end
@@ -110,12 +101,13 @@ class SimulatedAnnealing:
                         for i in range(self.no_of_terminals):
                             self.concentrator_capacities[self.network_solution[i]] -= self.terminal_demands[i]
             T *= frac
-        concentrators_used = []
+        # Resetting concentrators used array to reflect the latest changes
+        self.concentrators_used = []
         for i in range(self.no_of_concentrators):
             if i in self.network_solution:
-                concentrators_used.append(1)
+                self.concentrators_used.append(1)
             else:
-                concentrators_used.append(0)
-        return self.network_cost, self.network_solution, concentrators_used, self.concentrator_capacities
+                self.concentrators_used.append(0)
+        return self.network_cost, self.network_solution, self.concentrators_used, self.concentrator_capacities
 
     

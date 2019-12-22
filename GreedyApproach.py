@@ -1,6 +1,6 @@
 import copy
 
-def Greedy(concentrator_costs, concentrator_capacities, terminal_demands, terminal_assignment_costs, no_of_concentrators, no_of_terminals):
+def Greedy(concentrator_costs, concentrator_capacities, terminal_demands, terminal_assignment_costs, no_of_concentrators, no_of_terminals, data_directory_keyword, test_size_keyword):
     network_solution = []
     concentrators_used = []
     network_cost = sum(concentrator_costs)
