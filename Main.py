@@ -72,7 +72,7 @@ if __name__ == "__main__":
         sa_cost_min_index = sa_costs.index(sa_cost_min)
         sa_best_solution = sa_solutions[sa_cost_min_index]
         sa_best_used = sa_used[sa_cost_min_index]
-        sa_best_capacities = sa_used[sa_cost_min_index]
+        sa_best_capacities = sa_capacities[sa_cost_min_index]
 
         # Greedy
         start_time = time.time()
